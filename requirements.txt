@@ -1,0 +1,4 @@
+5 complex queries - linking to 3 or more tables
+5 different structure queries - different functions (INSERT, DELETE, etc)
+20 queries
+Match ER Diagram
