@@ -1,6 +1,6 @@
 #!/bin/bash
 
-db="ships.sqlite"
+db="LibraryDB.sqlite"
 rm -f ${db}
 touch ${db}
 
