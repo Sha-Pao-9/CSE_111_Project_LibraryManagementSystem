@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS Category;
 DROP TABLE IF EXISTS Ratings;
 
 
-
 CREATE TABLE User (
     u_userkey INT PRIMARY KEY,
     u_name VARCHAR(100) NOT NULL,
@@ -51,6 +50,8 @@ CREATE TABLE Authors (
 );
 
 CREATE TABLE BookAuthor (
+    --FOREIGN KEY(b_id) REFERENCES Book(b_id)
+    --FOREIGN KEY(b_id) REFERENCES Book(b_id)
     b_id INT NOT NULL,
     a_id INT NOT NULL
 );
