@@ -1,12 +1,14 @@
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Bookmarks;
-DROP TABLE IF EXISTS Edit;
 DROP TABLE IF EXISTS Search;
-DROP TABLE IF EXISTS Book;
-DROP TABLE IF EXISTS Info;
+DROP TABLE IF EXISTS Publisher;
+DROP TABLE IF EXISTS PublisherAuthors;
 DROP TABLE IF EXISTS Authors;
-DROP TABLE IF EXISTS Author_Book;
+DROP TABLE IF EXISTS BookAuthor;
+DROP TABLE IF EXISTS Book;
 DROP TABLE IF EXISTS Category;
+DROP TABLE IF EXISTS Ratings;
+
 
 
 CREATE TABLE User (
@@ -25,11 +27,6 @@ CREATE TABLE Bookmarks (
     bm_addDate DATETIME NOT NULL
 );
 
-CREATE TABLE Edit (
-    add_id INT FOREIGN KEY,
-    re_id INT FOREIGN KEY
-);
-
 CREATE TABLE Search (
     s_id INT PRIMARY KEY,
     s_title VARCHAR(100) NOT NULL,
@@ -38,21 +35,14 @@ CREATE TABLE Search (
     s_isbn INT NOT NULL
 );
 
-CREATE TABLE Book (
-    b_id INT PRIMARY KEY,
-    b_name VARCHAR(100) NOT NULL
+CREATE TABLE Publisher (
+    p_id INT PRIMARY KEY,
+    p_name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE Info (
-    i_id INT PRIMARY KEY,
-    i_title VARCHAR(100) NOT NULL,
-    i_author VARCHAR(100) NOT NULL,
-    i_avgRating INT NOT NULL,
-    i_isbn INT NOT NULL,
-    i_language VARCHAR(20) NOT NULL,
-    i_numPages INT NOT NULL,
-    i_publishDate DATETIME NOT NULL,
-    i_publisher VARCHAR(100) NOT NULL
+CREATE TABLE PublisherAuthors (
+    p_id INT NOT NULL,
+    a_id INT NOT NULL
 );
 
 CREATE TABLE Authors (
@@ -60,12 +50,31 @@ CREATE TABLE Authors (
     a_name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE Author_Book (
-    a_id INT FOREIGN KEY,
-    b_id INT FOREIGN KEY
+CREATE TABLE BookAuthor (
+    b_id INT NOT NULL,
+    a_id INT NOT NULL
 );
+
+CREATE TABLE Book (
+    b_id INT PRIMARY KEY,
+    b_title VARCHAR(100) NOT NULL,
+    b_rating INT NOT NULL,
+    b_isbn INT NOT NULL,
+    b_language VARCHAR(20) NOT NULL,
+    b_numPages INT NOT NULL,
+    b_publishDate DATETIME NOT NULL,
+    b_publisher VARCHAR(100) NOT NULL
+);
+
 
 CREATE TABLE Category (
     c_id INT PRIMARY KEY,
     c_name VARCHAR(50) NOT NULL
 );
+
+CREATE TABLE Ratings (
+    r_id INT PRIMARY KEY,
+    r_title VARCHAR(50) NOT NULL,
+    r_rating INT(30)
+);
+
