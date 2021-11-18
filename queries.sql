@@ -2,15 +2,20 @@
 INSERT INTO User 
 VALUES ( '3' , 'Paolo Tercero' , 'Paolo Tercero@gmail.com', 'genericpassword');
 
+DELETE FROM User
+WHERE u_name = 'Paolo Tercero';
 --2 update password
 UPDATE  User
 SET     u_password = 'newpassword'
 WHERE   u_userkey = 3;
 
 --3 new book
-INSERT INTO Book (b_id, b_title, b_isbn, b_language, b_numPages, b_publishYear) VALUES
-('00022','Game of Thrones','0553588486 ', 'English', '835', '2005');
+INSERT INTO Book (b_id, b_title, b_isbn, b_language, b_numPages, b_publishYear, bc_id, ba_id) VALUES
+('0022','Game of Thrones','0553588486 ', 'English', '835', '2005','08', '22');
 
+
+DELETE FROM Book
+WHERE b_id = '0022';
 --4 change book
 INSERT INTO Authors(a_id, a_name) VALUES
 ('022', 'George R.R. Martin');
@@ -23,7 +28,7 @@ WHERE b_title = 'Game of Thrones';
 --6 display all books rated higher than 4.30
 SELECT  b_title, r_rating
 FROM    Book, 
-        Ratings,
+        Ratings
 WHERE   r_title = b_id
 AND     r_rating > 4.30;
 
@@ -47,12 +52,12 @@ AND     bm_title = b_title
 AND     r_title = b_id
 AND     r_rating > 4.20;
 
---9 many to many slect books with pages less than 200
+--9 many to many slect books with pages less than 300
 SELECT  a_name, b_title, b_numPages
 FROM    Authors,
         Book,
         BookAuthor
-WHERE b_numPages < 200
+WHERE b_numPages < 300
 AND BAa_id = a_id
 AND BAb_id = b_id;
 
@@ -85,9 +90,9 @@ FROM Book, Category
 WHERE bc_id = c_id
 AND c_name = 'Education';
 
-SELECT b_rating --13
-FROM Book 
-WHERE b_rating < 4.00;
+SELECT r_rating --13
+FROM Ratings 
+WHERE r_rating < 4.00;
 
 SELECT p_name --14
 FROM Publisher, Book 
