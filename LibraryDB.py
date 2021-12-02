@@ -47,10 +47,10 @@ def search(_conn):
                     FROM Book, Authors, Category
                     WHERE ba_id = a_id
                     AND bc_id = c_id
-                    AND b_title = ?"""
+                    AND b_title LIKE ?"""
 
         cur = _conn.cursor()
-        cur.execute(sql, (book,))
+        cur.execute(sql, (book + '%',))
         rows = cur.fetchall()
 
         if len(rows) == 0:
