@@ -62,31 +62,32 @@ def search(_conn):
             print(l)
             for row in rows:
                 print('|'.join([str(r) for r in row]))
+                print("Success!")
             
-        bookID = int(input("\nEnter Book ID to learn more about a book, '0' to exit: "))
+        # bookID = int(input("\nEnter Book ID to learn more about a book, '0' to exit: "))
         
-        if bookID != 0:
-            sql =  """SELECT b_id, b_title, b_numPages, b_publishYear, p_name, b_language
-                        FROM Book, Authors, Publisher, PublisherAuthors, Ratings
-                        WHERE ba_id = a_id
-                        AND p_id = PAp_id
-                        AND r_id = b_id
-                        AND b_id = ?"""
+        # if bookID != 0:
+        #     sql =  """SELECT b_id, b_title, b_numPages, b_publishYear, p_name, b_language
+        #                 FROM Book, Authors, Publisher, PublisherAuthors, Ratings
+        #                 WHERE ba_id = a_id
+        #                 AND p_id = PAp_id
+        #                 AND r_id = b_id
+        #                 AND b_id = ?"""
 
-            cur = _conn.cursor()
-            cur.execute(sql, (book, bookID, ))
-            rows = cur.fetchall()
+        #     cur = _conn.cursor()
+        #     cur.execute(sql, (book, bookID, ))
+        #     rows = cur.fetchall()
 
-            if len(rows) == 0:
-                print("The book ID does not exist in the database.")
-                main()
+        #     if len(rows) == 0:
+        #         print("The book ID does not exist in the database.")
+        #         main()
 
-            else:
-                l = ("Book ID | Title | Number of Pages |  Publish Year | Publisher | Language")
-                print("Displaying books found in database: \n")
-                print(l)
-                for row in rows:
-                    print('|'.join([str(r) for r in row]))
+        #     else:
+        #         l = ("Book ID | Title | Number of Pages |  Publish Year | Publisher | Language")
+        #         print("Displaying books found in database: \n")
+        #         print(l)
+        #         for row in rows:
+        #             print('|'.join([str(r) for r in row]))
 
         # _conn.commit()
         # print("success")
