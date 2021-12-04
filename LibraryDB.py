@@ -143,12 +143,14 @@ def main():
     conn = openConnection(database)
 
     print("--- Library Management System ---\n")
+
     print('Enter number of desired option: ')
-    print('1 -- Search By Title')
-    print('2 -- Search By Category')
-    print('3 -- Search By Ratings')
-    print('4 -- Create New Account')
-    print('5 -- Exit')
+    print('1 -- Search')
+    print('2 -- Add Books')
+    print('3 -- View Bookmarks')
+    print('4 -- Add Bookmarks')
+    print('5 -- Most Popular Books')
+    print('6 -- Exit')
 
     option = int(input('Option: '))
     with conn:
