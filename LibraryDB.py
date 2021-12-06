@@ -3,10 +3,6 @@ from sqlite3 import Error
 import os
 import random
 
-# DEFAULT_PATH = os.path.join(os.path.dirname(__file__), 'LibraryDB.sqlite')
-
-# conn = sqlite3.connect('LibraryDB.sqlite')
-
 def openConnection(_dbFile):
     print("++++++++++++++++++++++++++++++++++")
     print("Open database: ", _dbFile)
@@ -42,6 +38,41 @@ def search(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Searching table")
     try:
+
+        print("\nEnter Search Type:\n")
+        print('1 -- Search By Title')
+        print('2 -- Search By Category')
+        print('3 -- Search By Author')
+        print('4 -- Search By Publisher')
+        print('5 -- Search By Language')
+        print('6 -- Search By Publish Year')
+
+
+        option = int(input("Option: "))
+        if option == 1:
+            titleSearch(_conn)
+        if option == 2:
+            category(_conn)
+        if option == 3:
+            exit()
+        if option == 4:
+            exit()
+        if option == 5:
+            exit()
+        if option == 6:
+            exit()
+
+        # _conn.commit()
+        # print("success")
+    except Error as e:
+        # # If anything goes wrong
+        # _conn.rollback()
+        print(e)
+    print("++++++++++++++++++++++++++++++++++")
+
+def titleSearch(_conn):
+    print("Searching By Title\n")
+    try:
         book = input("Search for a book by title: ")
         sql = """SELECT b_id, b_title, a_name, c_name
                     FROM Book, Authors, Category
@@ -62,35 +93,44 @@ def search(_conn):
             print(l)
             for row in rows:
                 print('|'.join([str(r) for r in row]))
-                print("Success!")
-            
-        # bookID = int(input("\nEnter Book ID to learn more about a book, '0' to exit: "))
         
-        # if bookID != 0:
-        #     sql =  """SELECT b_id, b_title, b_numPages, b_publishYear, p_name, b_language
-        #                 FROM Book, Authors, Publisher, PublisherAuthors, Ratings
-        #                 WHERE ba_id = a_id
-        #                 AND p_id = PAp_id
-        #                 AND r_id = b_id
-        #                 AND b_id = ?"""
-
-        #     cur = _conn.cursor()
-        #     cur.execute(sql, (book, bookID, ))
-        #     rows = cur.fetchall()
-
-        #     if len(rows) == 0:
-        #         print("The book ID does not exist in the database.")
-        #         main()
-
-        #     else:
-        #         l = ("Book ID | Title | Number of Pages |  Publish Year | Publisher | Language")
-        #         print("Displaying books found in database: \n")
-        #         print(l)
-        #         for row in rows:
-        #             print('|'.join([str(r) for r in row]))
-
+        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        option = int(input("Option: "))
+        if option == 1:
+            bookID(_conn)
+        if option == 0:
+            main()
+            
         # _conn.commit()
         # print("success")
+    except Error as e:
+        # # If anything goes wrong
+        # _conn.rollback()
+        print(e)
+
+    print("++++++++++++++++++++++++++++++++++")
+
+def bookID(_conn):
+    print("Getting Table more information...")    
+    try:
+        bookID = int(input("\nEnter Book ID to learn more about a book: "))
+    
+        sql =  """SELECT b_id, b_title, b_numPages, b_publishYear, b_language
+                    FROM Book
+                    WHERE b_id = ?"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, ))
+        rows = cur.fetchall()
+
+        if len(rows) == 0:
+            print("Book ID not in database.")
+            main()
+        else:
+            l = ("Book ID | Title | Number of Pages |  Publish Year |Language")
+            print(l)
+            for row in rows:
+                print('|'.join([str(r) for r in row]))
     except Error as e:
         # If anything goes wrong
         _conn.rollback()
@@ -99,9 +139,20 @@ def search(_conn):
     print("++++++++++++++++++++++++++++++++++")
 
 
-
 def category(_conn):
-    print("++++++++++++++++++++++++++++++++++")
+    print("All Categories")
+    try:
+        sql ="""SELECT distinct(c_name) as Categories
+                FROM  category"""
+        cur = _conn.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+    except Error as e:
+        _conn.rollback()
+        print(e)
+
     print("Searching Table by Category")
     try:
         category = input("Search for a book by category: ")
@@ -109,10 +160,10 @@ def category(_conn):
                     FROM Book, Category, Authors
                     WHERE bc_id = c_id
                     AND ba_id = a_id
-                    AND c_name = ?;"""
+                    AND c_name LIKE  ?;"""
 
         cur = _conn.cursor()
-        cur.execute(sql, (category,))
+        cur.execute(sql, (category + '%',))
         rows = cur.fetchall()
 
         if len(rows) == 0:
@@ -135,6 +186,37 @@ def category(_conn):
 
     print("++++++++++++++++++++++++++++++++++")
 
+def add(_conn):
+    print("++++++++++++++++++++++++++++++++++")
+    print(" add")
+
+
+    while (True):
+        try:
+            check = input ("Enter 'Quit' to end, press 'Enter' to continue: ")
+            if(check == 'Quit: '):
+                main()
+            userinputID = input("Enter id: ")
+            userinputTitle = input("Enter Title: ")
+            userinputisbn = input("Enter  isbn: ")
+            userinputlangauge = input("Enter Language: ")
+            userinputPageNum = input("Enter number of pages: ")
+            userinputpubYear = input("Enter pub6lish year: ")
+            userinputbc_id= input("Enter caregory id: ")
+            userinputba_id = input("Enter author id: ")
+            
+            sql = """INSERT INTO Book 
+                    (b_id, b_title, b_isbn, b_language, b_numPages, b_publishYear, bc_id, ba_id) 
+                    VALUES ('{}','{}','{}', '{}', '{}', '{}', '{}', '{}');  """.format(userinputID,userinputTitle,userinputisbn,userinputlangauge,userinputPageNum,userinputpubYear,userinputbc_id,userinputba_id)
+            cur = _conn.cursor()
+            cur.execute(sql)
+            _conn.commit()
+            print("Book has been succesfully added.")
+        except Error as e:
+            # If anything goes wrong
+            _conn.rollback()
+            print(e)
+    
 
 def main():
     database = r"LibraryDB.sqlite"
@@ -157,10 +239,9 @@ def main():
         if  option == 1:
             search(conn)
         if option == 2:
-            category(conn)
-            exit()
+            add(conn)
         if option == 3:
-            exit()
+           bookID(conn)
         if option == 4:
             exit()
         if option == 5:
