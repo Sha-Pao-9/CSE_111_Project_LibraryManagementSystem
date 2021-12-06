@@ -52,11 +52,11 @@ def search(_conn):
         if option == 2:
             category(_conn)
         if option == 3:
-            authorSearch(_conn)
+            displayAuth(_conn)
         if option == 4:
             publisherSearch(_conn)
         if option == 5:
-            languageSearch(_conn)
+            exit()
         if option == 6:
             exit()
 
@@ -123,97 +123,97 @@ def category(_conn):
         _conn.rollback()
         print(e)
 
-    print("Searching Table by Category")
-    try:
-        category = input("Search for a book by category: ")
-        sql = """SELECT b_id, c_name, b_title, a_name
-                    FROM Book, Category, Authors
-                    WHERE bc_id = c_id
-                    AND ba_id = a_id
-                    AND c_name LIKE  ?;"""
+        print("Searching Table by Category")
+        try:
+            category = input("Search for a book by category: ")
+            sql = """SELECT b_id, c_name, b_title, a_name
+                        FROM Book, Category, Authors
+                        WHERE bc_id = c_id
+                        AND ba_id = a_id
+                        AND c_name LIKE  ?;"""
 
-        cur = _conn.cursor()
-        cur.execute(sql, (category + '%',))
-        rows = cur.fetchall()
+            cur = _conn.cursor()
+            cur.execute(sql, (category + '%',))
+            rows = cur.fetchall()
 
-        if len(rows) == 0:
-            print("This category does not exist in the database.")
-            main()
-        else:
-            l = ("Book ID | Category | Book Title | Author ")
-            print("Displaying books of this category: \n")
-            print(l)
-            for row in rows:
-                print('|'.join([str(r) for r in row]))
-                
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
-        option = int(input("Option: "))
-        if option == 1:
-            bookID(_conn)
-        if option == 0:
-            main()
+            if len(rows) == 0:
+                print("This category does not exist in the database.")
+                main()
+            else:
+                l = ("Book ID | Category | Book Title | Author ")
+                print("Displaying books of this category: \n")
+                print(l)
+                for row in rows:
+                    print('|'.join([str(r) for r in row]))
+                    
+            print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+            option = int(input("Option: "))
+            if option == 1:
+                bookID(_conn)
+            if option == 0:
+                main()
 
-        # _conn.commit()
-        # print("success")
-    except Error as e:
-        # If anything goes wrong
-        _conn.rollback()
-        print(e)
+            # _conn.commit()
+            # print("success")
+        except Error as e:
+            # If anything goes wrong
+            _conn.rollback()
+            print(e)
 
     print("++++++++++++++++++++++++++++++++++")
 
-
-def authorSearch(_conn):
+def displayAuth(_conn):
+    print("++++++++++++++++++++++++++++++++++")
     print("All Authors")
     try:
-        sql ="""SELECT distinct(a_name) as Author
-                FROM  Authors"""
+        sql ="""SELECT distinct(a_name) 
+                FROM   Authors"""
         cur = _conn.cursor()
         cur.execute(sql)
         rows = cur.fetchall()
         for row in rows:
             print(row)
+
     except Error as e:
         _conn.rollback()
         print(e)
 
-    print("Searching Table by Author")
-    try:
-        author = input("Search for a book by author: ")
-        sql = """SELECT b_id, a_name, b_title, c_name
-                    FROM Book, Category, Authors
-                    WHERE bc_id = c_id
-                    AND ba_id = a_id
-                    AND a_name LIKE  ?;"""
+        print("Searching Table by Author")
+        try:
+            author = input("Search for a book by Author: ")
+            sql = """SELECT b_id, a_name, b_title, c_name
+                        FROM Book, Category, Authors
+                        WHERE bc_id = c_id
+                        AND ba_id = a_id
+                        AND a_name LIKE  ?;"""
 
-        cur = _conn.cursor()
-        cur.execute(sql, (author + '%',))
-        rows = cur.fetchall()
+            cur = _conn.cursor()
+            cur.execute(sql, (author + '%',))
+            rows = cur.fetchall()
 
-        if len(rows) == 0:
-            print("This category does not exist in the database.")
-            main()
-        else:
-            l = ("Book ID | Author | Book Title | Category ")
-            print("Displaying books of this author: \n")
-            print(l)
-            for row in rows:
-                print('|'.join([str(r) for r in row]))
-                
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
-        option = int(input("Option: "))
-        if option == 1:
-            bookID(_conn)
-        if option == 0:
-            main()
+            if len(rows) == 0:
+                print("This author does not exist in the database.")
+                main()
+            else:
+                l = ("Book ID | Author | Book Title | Category ")
+                print("Displaying books of this author: \n")
+                print(l)
+                for row in rows:
+                    print('|'.join([str(r) for r in row]))
+                    
+            print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+            option = int(input("Option: "))
+            if option == 1:
+                bookID(_conn)
+            if option == 0:
+                main()
 
-        # _conn.commit()
-        # print("success")
-    except Error as e:
-        # If anything goes wrong
-        _conn.rollback()
-        print(e)
-
+            # _conn.commit()
+            # print("success")
+        except Error as e:
+            # If anything goes wrong
+            _conn.rollback()
+            print(e)
     print("++++++++++++++++++++++++++++++++++")
 
 def publisherSearch(_conn):
@@ -230,95 +230,45 @@ def publisherSearch(_conn):
         _conn.rollback()
         print(e)
 
-    print("Searching Table by Publisher")
-    try:
-        publisher = input("Search for a book by publisher: ")
-        sql = """SELECT b_id, b_title, p_name
-                    FROM Book, Publisher, PublisherAuthors
-                    WHERE p_id = PAp_id
-                    AND ba_id = PAa_id
-                    AND p_name LIKE  ?;"""
+        print("Searching Table by Publisher")
+        try:
+            category = input("Search for a book by publisher: ")
+            sql = """SELECT b_id, c_name, b_title, a_name
+                        FROM Book, Category, Authors
+                        WHERE bc_id = c_id
+                        AND ba_id = a_id
+                        AND c_name LIKE  ?;"""
 
-        cur = _conn.cursor()
-        cur.execute(sql, (publisher + '%',))
-        rows = cur.fetchall()
+            cur = _conn.cursor()
+            cur.execute(sql, (category + '%',))
+            rows = cur.fetchall()
 
-        if len(rows) == 0:
-            print("This publisher does not exist in the database.")
-            main()
-        else:
-            l = ("Book ID | Book Title | Publisher ")
-            print("Displaying books of this publisher: \n")
-            print(l)
-            for row in rows:
-                print('|'.join([str(r) for r in row]))
-                
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
-        option = int(input("Option: "))
-        if option == 1:
-            bookID(_conn)
-        if option == 0:
-            main()
+            if len(rows) == 0:
+                print("This category does not exist in the database.")
+                main()
+            else:
+                l = ("Book ID | Category | Book Title | Author ")
+                print("Displaying books of this category: \n")
+                print(l)
+                for row in rows:
+                    print('|'.join([str(r) for r in row]))
+                    
+            print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+            option = int(input("Option: "))
+            if option == 1:
+                bookID(_conn)
+            if option == 0:
+                main()
 
-        # _conn.commit()
-        # print("success")
-    except Error as e:
-        # If anything goes wrong
-        _conn.rollback()
-        print(e)
-
-    print("++++++++++++++++++++++++++++++++++")
-
-def languageSearch(_conn):
-    print("All Languages")
-    try:
-        sql ="""SELECT distinct(b_language) as Languages
-                FROM  Book"""
-        cur = _conn.cursor()
-        cur.execute(sql)
-        rows = cur.fetchall()
-        for row in rows:
-            print(row)
-    except Error as e:
-        _conn.rollback()
-        print(e)
-
-    print("Searching Table by Language")
-    try:
-        language = input("Search for a book by language: ")
-        sql = """SELECT b_id, b_title, b_language
-                    FROM Book
-                    WHERE b_language LIKE  ?;"""
-
-        cur = _conn.cursor()
-        cur.execute(sql, (language + '%',))
-        rows = cur.fetchall()
-
-        if len(rows) == 0:
-            print("This language does not exist in the database.")
-            main()
-        else:
-            l = ("Book ID | Book Title | Language ")
-            print("Displaying books of this language: \n")
-            print(l)
-            for row in rows:
-                print('|'.join([str(r) for r in row]))
-                
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
-        option = int(input("Option: "))
-        if option == 1:
-            bookID(_conn)
-        if option == 0:
-            main()
-
-        # _conn.commit()
-        # print("success")
-    except Error as e:
-        # If anything goes wrong
-        _conn.rollback()
-        print(e)
+            # _conn.commit()
+            # print("success")
+        except Error as e:
+            # If anything goes wrong
+            _conn.rollback()
+            print(e)
 
     print("++++++++++++++++++++++++++++++++++")
+
 
 def bookID(_conn):
     print("Getting Table more information...")    
@@ -371,7 +321,7 @@ def add(_conn):
             userinputisbn = input("Enter  isbn: ")
             userinputlangauge = input("Enter Language: ")
             userinputPageNum = input("Enter number of pages: ")
-            userinputpubYear = input("Enter publish year: ")
+            userinputpubYear = input("Enter pub6lish year: ")
             userinputbc_id= input("Enter caregory id: ")
             userinputba_id = input("Enter author id: ")
             
@@ -411,7 +361,7 @@ def main():
         if option == 2:
             add(conn)
         if option == 3:
-           bookID(conn)
+           exit(conn)
         if option == 4:
             exit()
         if option == 5:
