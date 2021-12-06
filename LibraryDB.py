@@ -386,6 +386,32 @@ def add(_conn):
             # If anything goes wrong
             _conn.rollback()
             print(e)
+
+def createUser(_conn):
+    print("++++++++++++++++++++++++++++++++++")
+    print(" add")
+
+    try:
+        check = input ("Enter 'Quit' to end, press 'Enter' to continue: ")
+        if(check == 'Quit: '):
+            main()
+        userinputID = input("Enter id: ")
+        userinputName = input("Enter name: ")
+        userinputEmail = input("Enter email: ")
+        userinputPassword = input("Enter password: ")
+
+        sql = """INSERT INTO User 
+                (u_userkey, u_name, u_email, u_password) 
+                VALUES ('{}','{}','{}', '{}');  """.format(userinputID, userinputName,userinputEmail,userinputPassword)
+        cur = _conn.cursor()
+        cur.execute(sql)
+        _conn.commit()
+        print("User has been succesfully created.")
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    
     
 
 def main():
@@ -406,6 +432,8 @@ def main():
 
     option = int(input('Option: '))
     with conn:
+        if  option ==0:
+            createUser(conn)
         if  option == 1:
             search(conn)
         if option == 2:
