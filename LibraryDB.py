@@ -412,8 +412,69 @@ def createUser(_conn):
         _conn.rollback()
         print(e)
     
-    
+def checkUser(_conn):
+    print("++++++++++++++++++++++++++++++++++")
+    # print("Checking for User")
+    # try:
+    #     user = input("Enter Username: ")
+    #     sql ="""SELECT u_name
+    #             FROM  User
+    #             WHERE u_name = ?"""
+    #     cur = _conn.cursor()
+    #     cur.execute(sql, (user,))
+    #     rows = cur.fetchall()
 
+    #     for row in rows:
+    #         print(row)
+    # except Error as e:
+    #     _conn.rollback()
+    #     print(e)
+
+    print("Searching Table by User")
+    try:
+        user = input("Enter Username: ")
+        password = input("Enter password: ")
+        sql = """SELECT u_userkey, u_name
+                    FROM User
+                    WHERE u_name = ?
+                    AND u_password = ?;"""
+
+        cur = _conn.cursor()
+        cur.execute(sql, (user, password,))
+        rows = cur.fetchall()
+
+        if len(rows) == 0:
+            print("This user does not exist, or invalid credentials. ")
+            print("\nCreate new user? Enter '1'. Try again? Enter '2'. For Main Menu, enter '0'")
+            option = int(input("Option: "))
+            if option == 0:
+                main()
+            if option == 1:
+                createUser(_conn)
+            if option == 2:
+                checkUser(_conn)
+        else:
+            l = ("User Name | Name ")
+            print("Displaying User Bookmarks: \n")
+            print(l)
+            for row in rows:
+                print('|'.join([str(r) for r in row]))
+                
+        # print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        # option = int(input("Option: "))
+        # if option == 1:
+        #     bookID(_conn)
+        # if option == 0:
+        #     main()
+
+        # _conn.commit()
+        # print("success")
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+
+    
 def main():
     database = r"LibraryDB.sqlite"
 
@@ -441,7 +502,7 @@ def main():
         if option == 3:
            bookID(conn)
         if option == 4:
-            exit()
+            checkUser(conn)
         if option == 5:
             exit()
 
