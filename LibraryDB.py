@@ -2,39 +2,36 @@ import sqlite3
 from sqlite3 import Error
 import os
 import random
+from colorama import init, Fore, Back, Style
+from termcolor import colored
+
 
 def openConnection(_dbFile):
-    print("++++++++++++++++++++++++++++++++++")
     print("Open database: ", _dbFile)
 
     conn = None
     try:
         conn = sqlite3.connect(_dbFile)
-        print("success")
     except Error as e:
         print(e)
 
-    print("++++++++++++++++++++++++++++++++++")
 
 # Return connection object
     return conn
 # Closing connection
 def closeConnection(_conn, _dbFile):
-    print("++++++++++++++++++++++++++++++++++")
     print("Close database: ", _dbFile)
 
     try:
         _conn.commit()
-        print("success")
     except Error as e:
         print(e)
 
-    print("++++++++++++++++++++++++++++++++++")
 
 def Viewbookmarks(_conn,user):
     print("++++++++++++++++++++++++++++++++++")
-    print("Searching table")
-    print(user + " Bookmarks")
+    print(Fore.GREEN + user + " Bookmarks")
+    print(Style.RESET_ALL)
     try:
         sql = """
         SELECT  b_id, bm_title, a_name, c_name
@@ -54,8 +51,17 @@ def Viewbookmarks(_conn,user):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("No bookmarks")
-            main()
+            print(Fore.RED + "No Bookmarks Found For User: " + user)
+            print(Style.RESET_ALL)
+
+            print(Fore.BLUE + "Want to add to your bookmarks? Enter '1'. Enter '0' for Main Menu")
+            print(Style.RESET_ALL)
+
+            option = int(input("Option: "))
+            if option == 1:
+                addBookmarks(_conn, user)
+            if option == 0:
+                main()
         else:
             l = ("Category | Book Title | Author ")
             print("Displaying books of this category: \n")
@@ -68,12 +74,14 @@ def Viewbookmarks(_conn,user):
         # _conn.rollback()
         print(e)
 
+
 def search(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Searching table")
     try:
 
         print("\nEnter Search Type:\n")
+        print('0 -- Go Back to Menu')
         print('1 -- Search By Title')
         print('2 -- Search By Category')
         print('3 -- Search By Author')
@@ -83,6 +91,8 @@ def search(_conn):
 
 
         option = int(input("Option: "))
+        if option == 0:
+            main()
         if option == 1:
             titleSearch(_conn)
         if option == 2:
@@ -119,8 +129,19 @@ def titleSearch(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("The book does not exist in the database.")
-            main()
+            print(Fore.RED + "The book does not exist in the database.")
+            print(Style.RESET_ALL)
+            print(Fore.BLUE + "Want to add book to database? Enter '1'. Enter '2' to search again. Enter '0' for Main Menu")
+            print(Style.RESET_ALL)
+
+            option = int(input("Option: "))
+            if option == 1:
+                addBook(_conn)
+            if option == 0:
+                main()
+            if option == 2:
+                titleSearch(_conn)
+
         else:
             l = ("Book ID | Title | Author | Category")
             print("Displaying books found in database: \n")
@@ -128,7 +149,8 @@ def titleSearch(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
         
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Fore.BLUE + "\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
             bookID(_conn)
@@ -173,7 +195,8 @@ def category(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("This category does not exist in the database.")
+            print(Fore.RED + "This category does not exist in the database.")
+            print(Style.RESET_ALL)
             main()
         else:
             l = ("Book ID | Category | Book Title | Author ")
@@ -182,7 +205,8 @@ def category(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
                 
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Fore.BLUE + "\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
             bookID(_conn)
@@ -227,7 +251,8 @@ def authorSearch(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("This category does not exist in the database.")
+            print(Fore.RED + "This author does not exist in the database.")
+            print(Style.RESET_ALL)
             main()
         else:
             l = ("Book ID | Author | Book Title | Category ")
@@ -236,7 +261,8 @@ def authorSearch(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
                 
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Fore.BLUE + "\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
             bookID(_conn)
@@ -280,7 +306,8 @@ def publisherSearch(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("This publisher does not exist in the database.")
+            print(Fore.RED + "This publisher does not exist in the database.")
+            print(Style.RESET_ALL)
             main()
         else:
             l = ("Book ID | Book Title | Publisher ")
@@ -289,7 +316,8 @@ def publisherSearch(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
                 
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Fore.BLUE + "\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
             bookID(_conn)
@@ -331,7 +359,8 @@ def languageSearch(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("This language does not exist in the database.")
+            print(Fore.RED + "This language does not exist in the database.")
+            print(Style.RESET_ALL)
             main()
         else:
             l = ("Book ID | Book Title | Language ")
@@ -340,7 +369,8 @@ def languageSearch(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
                 
-        print("\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Fore.BLUE + "\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
             bookID(_conn)
@@ -370,7 +400,8 @@ def bookID(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("Book ID not in database.")
+            print(Fore.RED + "Book ID not in database.")
+            print(Style.RESET_ALL)
             main()
         else:
             l = ("Book ID | Title | Number of Pages |  Publish Year |Language")
@@ -378,7 +409,8 @@ def bookID(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
 
-        print("\nWant to search again?, Enter '1'. Enter '0' for Main Menu.")
+        print(Fore.BLUE + "\nWant to search again?, Enter '1'. Enter '0' for Main Menu.")
+        print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
             search(_conn)
@@ -392,7 +424,7 @@ def bookID(_conn):
 
     print("++++++++++++++++++++++++++++++++++")
 
-def add(_conn):
+def addBook(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print(" add")
 
@@ -417,7 +449,8 @@ def add(_conn):
             cur = _conn.cursor()
             cur.execute(sql)
             _conn.commit()
-            print("Book has been succesfully added.")
+            print(Fore.GREEN + "Book has been succesfully added.")
+            print(Style.RESET_ALL)
         except Error as e:
             # If anything goes wrong
             _conn.rollback()
@@ -442,7 +475,8 @@ def createUser(_conn):
         cur = _conn.cursor()
         cur.execute(sql)
         _conn.commit()
-        print("User has been succesfully created.")
+        print(Fore.GREEN + "User has been succesfully created.")
+        print(Style.RESET_ALL)
     except Error as e:
         # If anything goes wrong
         _conn.rollback()
@@ -450,21 +484,6 @@ def createUser(_conn):
     
 def checkUser(_conn):
     print("++++++++++++++++++++++++++++++++++")
-    # print("Checking for User")
-    # try:
-    #     user = input("Enter Username: ")
-    #     sql ="""SELECT u_name
-    #             FROM  User
-    #             WHERE u_name = ?"""
-    #     cur = _conn.cursor()
-    #     cur.execute(sql, (user,))
-    #     rows = cur.fetchall()
-
-    #     for row in rows:
-    #         print(row)
-    # except Error as e:
-    #     _conn.rollback()
-    #     print(e)
 
     print("Searching Table by User")
     try:
@@ -480,7 +499,8 @@ def checkUser(_conn):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print("This user does not exist, or invalid credentials. ")
+            print(Fore.YELLOW + "This user does not exist, or invalid credentials. ")
+            print(Style.RESET_ALL)
             print("\nCreate new user? Enter '1'. Try again? Enter '2'. For Main Menu, enter '0'")
             option = int(input("Option: "))
             if option == 0:
@@ -490,25 +510,71 @@ def checkUser(_conn):
             if option == 2:
                 checkUser(_conn)
         else:
-            l = ("User Name | Name ")
             print("Displaying User Bookmarks: \n")
             Viewbookmarks(_conn,user)
-            print(l)
-                
-        # print("\nEnter 1 to learn more about book, '0' to Main Menu.")
-        # option = int(input("Option: "))
-        # if option == 1:
-        #     bookID(_conn)
-        # if option == 0:
-        #     main()
+            print(Fore.BLUE + "Add More bookmarks? Enter '1', '0' for Main Menu")
+            print(Style.RESET_ALL)
+            option = int(input("Option: "))
+            if option == 0:
+                main()
+            if option == 1:
+                addBookmarks(_conn, user)
 
-        # _conn.commit()
-        # print("success")
+        _conn.commit()
+        print("success")
     except Error as e:
         # If anything goes wrong
         _conn.rollback()
         print(e)
 
+def addBookmarks(_conn, user):
+    print("++++++++++++++++++++++++++++++++++")
+    print("Searching Table by User")
+
+    try:
+        userinputID = int(input("Enter id: "))
+
+
+        sql = """INSERT INTO Bookmarks 
+                    SELECT b_id, u_userkey, b_title, a_name, p_name, b_numPages, b_publishYear
+                    FROM Book, Bookmarks, User, Authors, Publisher, PublisherAuthors
+                    WHERE b_id = bm_id
+                    AND bm_userkey = u_userkey
+                    AND ba_id = a_id
+                    AND p_id = PAp_id
+                    AND ba_id = PAa_id
+                    AND u_name = ?
+                    AND b_id = ?; """
+        cur = _conn.cursor()
+        cur.execute(sql, (user, userinputID, ))
+        _conn.commit()
+        print(Fore.GREEN + "Your bookmark has been succesfully added!")
+        print(Style.RESET_ALL)
+        Viewbookmarks(_conn, user)
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+
+def deleteBook(_conn):
+    print("Delete Books")
+    try:
+        bookID = int(input("\nEnter Book ID to delete book: "))
+    
+        sql =  """DELETE FROM Book
+                     WHERE b_id = ?;"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, ))
+        _conn.commit()
+
+        print(Fore.GREEN + "Book has been succesfully deleted.")
+        print(Style.RESET_ALL)
+        main()
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
     
 def main():
     database = r"LibraryDB.sqlite"
@@ -516,14 +582,17 @@ def main():
     # create a database connection
     conn = openConnection(database)
 
-    print("--- Library Management System ---\n")
+    print(Fore.BLUE + "--- Library Management System ---\n")
+    print(Style.RESET_ALL)
 
-    print('Enter number of desired option: ')
+    print(Fore.GREEN + 'Enter number of desired option: ')
+    print(Style.RESET_ALL)
+
     print('1 -- Search')
     print('2 -- Add Books')
     print('3 -- View Bookmarks')
     print('4 -- Add Bookmarks')
-    print('5 -- Most Popular Books')
+    print('5 -- Delete Books')
     print('6 -- Exit')
 
     option = int(input('Option: '))
@@ -533,16 +602,16 @@ def main():
         if  option == 1:
             search(conn)
         if option == 2:
-            add(conn)
+            addBook(conn)
         if option == 3:
            checkUser(conn)
         if option == 4:
-            checkUser(conn)
+            addBookmarks(conn)
         if option == 5:
+            deleteBook(conn)
+        if option == 6:
             exit()
-
-    # search(conn)
-    # category(conn)
+            
     closeConnection(conn, database)
 
 if __name__ == '__main__':
