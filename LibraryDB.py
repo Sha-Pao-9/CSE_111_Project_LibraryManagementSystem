@@ -73,6 +73,23 @@ def Viewbookmarks(_conn,user):
         # # If anything goes wrong
         # _conn.rollback()
         print(e)
+        
+def listBooks(_conn):
+    print("++++++++++++++++++++++++++++++++++")
+    try:
+        print("List of current books: ")
+        sql = """SELECT b_id, b_title
+                    FROM Book;"""
+
+        cur = _conn.cursor()
+        cur.execute(sql, )
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+    except Error as e:
+        _conn.rollback()
+        print(e)
+    print("++++++++++++++++++++++++++++++++++")
 
 
 def search(_conn):
