@@ -119,8 +119,9 @@ def titleSearch(_conn):
     try:
         book = input("Search for a book by title: ")
         sql = """SELECT b_id, b_title, a_name, c_name
-                    FROM Book, Authors, Category
-                    WHERE ba_id = a_id
+                    FROM Book, Authors, Category,BookAuthor
+                    WHERE BAa_id = a_id
+                    AND BAb_id = b_id
                     AND bc_id = c_id
                     AND b_title LIKE ?"""
 
