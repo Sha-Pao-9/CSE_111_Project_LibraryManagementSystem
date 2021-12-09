@@ -610,6 +610,8 @@ def updateBooks(_conn):
     print("Enter '0' for Main Menu.")
     print(Style.RESET_ALL)
     option = int(input("Option: "))
+    if option == 1:
+        updateRating(_conn)
     if option == 2:
         updateNumPages(_conn)
     if option == 0:
@@ -662,6 +664,53 @@ def updateNumPages(_conn):
         # If anything goes wrong
         _conn.rollback()
         print(e)
+    print("++++++++++++++++++++++++++++++++++")
+
+def updateRating(_conn):
+
+    try:
+        bookID = int(input("\nEnter Book ID to update a book: "))
+    
+        sql =  """SELECT b_id, b_title, b_numPages, r_rating
+                    FROM Book, Ratings
+                    WHERE b_id = r_title
+                    AND b_id = ?"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, ))
+        rows = cur.fetchall()
+
+        if len(rows) == 0:
+            print(Fore.RED + "Book ID not in database.")
+            print(Style.RESET_ALL)
+            main()
+        else:
+            l = ("Book ID | Title | Number of Pages | Rating")
+            print(l)
+            for row in rows:
+                print('|'.join([str(r) for r in row]))
+
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    new_rating = float(input("Enter new rating (Float): "))
+    try: 
+        sql =  """UPDATE Ratings, Book
+                    SET r_rating = ?
+                    WHERE b_id = r_title
+                    AND b_id = ?;"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, new_rating, ))
+        _conn.commit()
+        updateBooks(_conn)
+
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    print("++++++++++++++++++++++++++++++++++")
 
 
     
