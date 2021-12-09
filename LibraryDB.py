@@ -39,12 +39,10 @@ def Viewbookmarks(_conn,user):
                 Bookmarks,
                 Book,
                 Category,
-                Authors,
-                BookAuthor 
+                Authors 
         WHERE   u_userkey = bm_userkey
         AND     bm_title = b_title
-        AND     BAa_id = a_id
-        AND     BAb_id = a_id
+        AND     ba_id = a_id
         AND     bc_id = c_id
         AND     u_name = '{}'""".format(user)
 
