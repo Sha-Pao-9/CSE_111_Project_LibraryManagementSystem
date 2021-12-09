@@ -3,7 +3,6 @@ from sqlite3 import Error
 import os
 import random
 from colorama import init, Fore, Back, Style
-from termcolor import colored
 
 
 def openConnection(_dbFile):
@@ -39,10 +38,12 @@ def Viewbookmarks(_conn,user):
                 Bookmarks,
                 Book,
                 Category,
-                Authors 
+                Authors,
+                BookAuthor 
         WHERE   u_userkey = bm_userkey
         AND     bm_title = b_title
-        AND     ba_id = a_id
+        AND     BAa_id = a_id
+        AND     BAb_id = a_id
         AND     bc_id = c_id
         AND     u_name = '{}'""".format(user)
 
@@ -51,7 +52,7 @@ def Viewbookmarks(_conn,user):
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            print(Fore.RED + "No Bookmarks Found For User: " + user)
+            print(Fore.RED + "No Bookmarks Found For " + user + ":")
             print(Style.RESET_ALL)
 
             print(Fore.BLUE + "Want to add to your bookmarks? Enter '1'. Enter '0' for Main Menu")
@@ -65,7 +66,7 @@ def Viewbookmarks(_conn,user):
                 main()
         else:
             l = ("Category | Book Title | Author ")
-            print("Displaying books of this category: \n")
+            print("Displaying booksmarks: \n")
             print(l)
             for row in rows:
                 print('|'.join([str(r) for r in row]))
@@ -79,14 +80,19 @@ def listBooks(_conn):
     print("++++++++++++++++++++++++++++++++++")
     try:
         print("List of current books: ")
-        sql = """SELECT b_id, b_title
-                    FROM Book;"""
+        sql = """SELECT b_id, b_title, b_numPages, r_rating
+                    FROM Book, Ratings
+                    WHERE b_id = r_title
+                    ORDER BY b_id"""
 
         cur = _conn.cursor()
         cur.execute(sql, )
         rows = cur.fetchall()
+        l = ("Book ID | Book Title | Number of Pages | Category")
+        print("Displaying books found in database: \n")
+        print(l)
         for row in rows:
-            print(row)
+            print('|'.join([str(r) for r in row]))
     except Error as e:
         _conn.rollback()
         print(e)
@@ -260,9 +266,10 @@ def authorSearch(_conn):
     try:
         author = input("Search for a book by author: ")
         sql = """SELECT b_id, a_name, b_title, c_name
-                    FROM Book, Category, Authors
+                    FROM Book, Category, Authors, BookAuthor
                     WHERE bc_id = c_id
-                    AND ba_id = a_id
+                    AND BAa_id = a_id
+                    AND BAb_id = b_id
                     AND a_name LIKE  ?;"""
 
         cur = _conn.cursor()
@@ -552,18 +559,14 @@ def addBookmarks(_conn, user):
 
     try:
         userinputID = int(input("Enter id: "))
+        num = random.randint(1, 1000)
 
 
-        sql = """INSERT INTO Bookmarks 
-                    SELECT b_id, u_userkey, b_title, a_name, p_name, b_numPages, b_publishYear
-                    FROM Book, Bookmarks, User, Authors, Publisher, PublisherAuthors
-                    WHERE b_id = bm_id
-                    AND bm_userkey = u_userkey
-                    AND ba_id = a_id
-                    AND p_id = PAp_id
-                    AND ba_id = PAa_id
-                    AND u_name = ?
-                    AND b_id = ?; """
+        sql = """INSERT into bookmarks(bm_id,bm_userkey,bm_title)
+                    SELECT ?, u_userkey, b_title
+                    FROM Book, User
+                    WHERE u_name = ?
+                    AND b_id = ?;  """
         cur = _conn.cursor()
         cur.execute(sql, (user, userinputID, ))
         _conn.commit()
@@ -574,6 +577,7 @@ def addBookmarks(_conn, user):
         # If anything goes wrong
         _conn.rollback()
         print(e)
+    print("++++++++++++++++++++++++++++++++++")
 
 def deleteBook(_conn):
     print("Delete Books")
@@ -594,6 +598,120 @@ def deleteBook(_conn):
         # If anything goes wrong
         _conn.rollback()
         print(e)
+    print("++++++++++++++++++++++++++++++++++")
+
+def updateBooks(_conn):
+    listBooks(_conn)
+
+    print(Fore.BLUE + "\nWhat would you like to update?")
+    print(Fore.GREEN + "Enter '1' for Ratings.")
+    print("Enter '2' for Number of Pages. ")
+    print("Enter '0' for Main Menu.")
+    print(Style.RESET_ALL)
+    option = int(input("Option: "))
+    if option == 1:
+        updateRating(_conn)
+    if option == 2:
+        updateNumPages(_conn)
+    if option == 0:
+        main()
+
+
+    print("++++++++++++++++++++++++++++++++++")
+
+def updateNumPages(_conn):
+
+    try:
+        bookID = int(input("\nEnter Book ID to update a book: "))
+    
+        sql =  """SELECT b_id, b_title, b_numPages, r_rating
+                    FROM Book, Ratings
+                    WHERE b_id = r_title
+                    AND b_id = ?"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, ))
+        rows = cur.fetchall()
+
+        if len(rows) == 0:
+            print(Fore.RED + "Book ID not in database.")
+            print(Style.RESET_ALL)
+            main()
+        else:
+            l = ("Book ID | Title | Number of Pages | Rating")
+            print(l)
+            for row in rows:
+                print('|'.join([str(r) for r in row]))
+
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    # bookID = int(input("\nEnter Book ID to update a book: "))
+    new_rating = int(input("Enter new number of pages (Int): "))
+    try: 
+        sql =  """UPDATE Book
+                    SET b_numPages = ?
+                    WHERE b_id = ?;"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(new_rating, bookID, ))
+        _conn.commit()
+        updateBooks(_conn)
+
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    print("++++++++++++++++++++++++++++++++++")
+
+def updateRating(_conn):
+
+    try:
+        bookID = int(input("\nEnter Book ID to update a book: "))
+    
+        sql =  """SELECT b_id, b_title, b_numPages, r_rating
+                    FROM Book, Ratings
+                    WHERE b_id = r_title
+                    AND b_id = ?"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, ))
+        rows = cur.fetchall()
+
+        if len(rows) == 0:
+            print(Fore.RED + "Book ID not in database.")
+            print(Style.RESET_ALL)
+            main()
+        else:
+            l = ("Book ID | Title | Number of Pages | Rating")
+            print(l)
+            for row in rows:
+                print('|'.join([str(r) for r in row]))
+
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    new_rating = float(input("Enter new rating (Float): "))
+    try: 
+        sql =  """UPDATE Ratings, Book
+                    SET r_rating = ?
+                    WHERE b_id = r_title
+                    AND b_id = ?;"""
+
+        cur = _conn.cursor()
+        cur.execute(sql,(bookID, new_rating ))
+        _conn.commit()
+        updateBooks(_conn)
+
+    except Error as e:
+        # If anything goes wrong
+        _conn.rollback()
+        print(e)
+    print("++++++++++++++++++++++++++++++++++")
+
+
     
 def main():
     database = r"LibraryDB.sqlite"
@@ -610,7 +728,7 @@ def main():
     print('1 -- Search')
     print('2 -- Add Books')
     print('3 -- View Bookmarks')
-    print('4 -- Add Bookmarks')
+    print('4 -- Update Books')
     print('5 -- Delete Books')
     print('6 -- Exit')
 
@@ -625,7 +743,7 @@ def main():
         if option == 3:
            checkUser(conn)
         if option == 4:
-            addBookmarks(conn)
+            updateBooks(conn)
         if option == 5:
             deleteBook(conn)
         if option == 6:
