@@ -39,10 +39,12 @@ def Viewbookmarks(_conn,user):
                 Bookmarks,
                 Book,
                 Category,
-                Authors 
+                Authors,
+                BookAuthor 
         WHERE   u_userkey = bm_userkey
         AND     bm_title = b_title
-        AND     ba_id = a_id
+        AND     BAa_id = a_id
+        AND     BAb_id = b_id
         AND     bc_id = c_id
         AND     u_name = '{}'""".format(user)
 
@@ -553,15 +555,15 @@ def addBookmarks(_conn, user):
 
     try:
         userinputID = int(input("Enter id: "))
-        # num = random.randint(1, 1000)
+        num = random.randint(10, 1000)
 
         sql = """INSERT into Bookmarks(bm_id, bm_userkey, bm_title)
-                    SELECT b_id, u_userkey, b_title
+                    SELECT ?, u_userkey, b_title
                     FROM Book, User
                     WHERE u_name = ?
                     AND b_id = ?;  """
         cur = _conn.cursor()
-        cur.execute(sql, (user, userinputID, ))
+        cur.execute(sql, (num, user, userinputID, ))
         _conn.commit()
         print(Fore.GREEN + "Your bookmark has been succesfully added!")
         print(Style.RESET_ALL)
