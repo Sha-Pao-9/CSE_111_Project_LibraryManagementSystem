@@ -553,10 +553,10 @@ def addBookmarks(_conn, user):
 
     try:
         userinputID = int(input("Enter id: "))
-        num = random.randint(1, 1000)
+        # num = random.randint(1, 1000)
 
-        sql = """INSERT into bookmarks(bm_id,bm_userkey,bm_title)
-                    SELECT ?, u_userkey, b_title
+        sql = """INSERT into Bookmarks(bm_id, bm_userkey, bm_title)
+                    SELECT b_id, u_userkey, b_title
                     FROM Book, User
                     WHERE u_name = ?
                     AND b_id = ?;  """
