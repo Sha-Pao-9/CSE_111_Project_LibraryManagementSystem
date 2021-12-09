@@ -76,7 +76,12 @@ INSERT INTO Publisher(p_id, p_name) VALUES
 ('016','Liberty Fund Inc'),
 ('017','Arthur A. Levine Books'),
 ('018','Del Rey'),
-('019','Paw Prints');
+('019','Paw Prints'),
+('20', 'Bantum'),
+('21', 'Harper Perennial Modern Classics'),
+('22', 'Scribner'),
+('23','Penguin Books'),
+('24','Hachette Book Group');
 
 
 CREATE TABLE PublisherAuthors (
@@ -104,7 +109,14 @@ INSERT INTO PublisherAuthors(PAp_id, PAa_id) VALUES
 ('0015', '014'),
 ('0016', '015'),
 ('0017', '018'),
-('0019', '016');
+('0019', '016'),
+('20', '20'),
+('20', '21'),
+('20', '22'),
+('21', '23'),
+('22', '24'),
+('23','25'),
+('24','26');
 
 CREATE TABLE Authors (
     a_id INT NOT NULL,
@@ -130,7 +142,14 @@ INSERT INTO Authors(a_id, a_name) VALUES
 ('016', 'Rick Riordan'),
 ('017', 'Antonia Fraser'),
 ('018', 'Edmund Burke'),
-('019', 'Joseph Staten');
+('019', 'Joseph Staten'),
+('0020', 'Anne Frank'),--diary of young--
+('0021', 'Eleanor Roosevelt'),--diary of young--
+('0022', 'B.M. Mooyaart-Doubleday'),--diary of young--
+('0023', 'Harper Lee'),---tkm---
+('0024', 'F. Scott Fitzgerald'),
+('0025','Don Quixote'),
+('0026','Andrzej Sapkowski');
 
 
 CREATE TABLE BookAuthor (
@@ -160,7 +179,14 @@ INSERT INTO BookAuthor(BAb_id, BAa_id) VALUES
 ('0015', '014'),
 ('0016', '015'),
 ('0017', '018'),
-('0019', '016');
+('0019', '016'),
+('0022', '020'),--diary of young--
+('0022', '021'),--diary of young--
+('0022', '022'),--diary of young--
+('0023', '023'),--tkm--
+('0024', '024'),---tgb--
+('0025','025'),
+('0026','026');
 
 
 CREATE TABLE Book (
@@ -196,7 +222,12 @@ INSERT INTO Book (b_id, b_title, b_isbn, b_language, b_numPages, b_publishYear, 
 ('0018','Harry Potter and the Prisoner of Azkaban (Harry Potter, #3)', '0439554926', 'English', '422', '2003', '08', '012'),
 ('0019','The Lightning Thief (Percy Jackson and the Olympians, #1)', '1435256891', 'English', '377', '2008', '08', '016'),
 ('0020','Halo: The Fall of Reach', '0345451341', 'English', '352', '2001', '07', '013'),
-('0021','Halo: Contact Harvest', '0765315696', 'English', '353', '2007', '07', '019');
+('0021','Halo: Contact Harvest', '0765315696', 'English', '353', '2007', '07', '019'),
+('22','The Diary of a Young Girl','553296981', 'English', '710', '1947', '12', 'null' ),
+('23','To Kill a Mockingbird','61120081','English','336','1960', '13', 'null'),
+('24','The Great Gatsby', '0743273567','English','200','1925', '13', 'null'),
+('25','Don Quixote', '0142437239','Spanish','1023','2003', '6', 'null'),
+('26','Blood of Elves', '031602919X','Polish','398','2009', '8', 'null');
 
 CREATE TABLE Category (
     c_id INT PRIMARY KEY,
@@ -214,7 +245,9 @@ INSERT INTO Category(c_id, c_name) VALUES
 ('08', 'Fantasy'),
 ('09', 'Biography'),
 ('10', 'Sports'),
-('11', 'French Revolution')
+('11', 'French Revolution'),
+('12','NonFiction'),--diary of young--
+('13', 'Domestic fiction')--tkm--
 ;
 
 
@@ -244,4 +277,9 @@ INSERT INTO Ratings(r_id, r_title, r_rating) VALUES
 ('0017', '0018', 4.57),
 ('0018', '0021', 3.98),
 ('0019', '0012', 4.47),
-('0020', '0011', 3.63);
+('0020', '0011', 3.63),
+('0022','0022',4.10),
+('0023','0023',4.25),
+('0024','0024',3.93),--tgb--
+('0025','0025', 3.88),
+('0026','0026', 4.09);

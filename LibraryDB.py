@@ -201,6 +201,20 @@ def titleSearch(_conn):
 
     print("++++++++++++++++++++++++++++++++++")
 
+def listCategory(_conn):
+    print("All Categories")
+    try:
+        sql ="""SELECT c_id, c_name
+                FROM  category"""
+        cur = _conn.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+    except Error as e:
+        _conn.rollback()
+        print(e)
+
 
 def category(_conn):
     print("All Categories")
@@ -256,6 +270,19 @@ def category(_conn):
 
     print("++++++++++++++++++++++++++++++++++")
 
+def listAuthors(_conn):
+    print("All Authors")
+    try:
+        sql ="""SELECT a_id, a_name
+                FROM  Authors"""
+        cur = _conn.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+    except Error as e:
+        _conn.rollback()
+        print(e)
 
 def authorSearch(_conn):
     print("All Authors")
@@ -457,8 +484,8 @@ def addBook(_conn):
 
     while (True):
         try:
-            check = int(input ("Enter '0' for Main Menu, press 'Enter' to continue: "))
-            if(check == 0):
+            check = input ("Enter 'Q' for Main Menu, press 'Enter' to continue: ")
+            if(check == 'Q'):
                 main()
             userinputID = input("Enter id: ")
             userinputTitle = input("Enter Title: ")
@@ -466,7 +493,9 @@ def addBook(_conn):
             userinputlangauge = input("Enter Language: ")
             userinputPageNum = input("Enter number of pages: ")
             userinputpubYear = input("Enter publish year: ")
+            listCategory(_conn)
             userinputbc_id= input("Enter category id: ")
+            listAuthors(_conn)
             userinputba_id = input("Enter author id: ")
             
             sql = """INSERT INTO Book 
@@ -576,6 +605,7 @@ def addBookmarks(_conn, user):
 
 def deleteBook(_conn):
     print("Delete Books")
+    listBooks(_conn)
     try:
         bookID = int(input("\nEnter Book ID to delete book: "))
     
