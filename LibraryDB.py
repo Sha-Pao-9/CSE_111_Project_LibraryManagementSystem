@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import os
 import random
+from sqlite3.dbapi2 import connect
 from colorama import init, Fore, Back, Style
 
 
@@ -43,7 +44,7 @@ def Viewbookmarks(_conn,user):
         WHERE   u_userkey = bm_userkey
         AND     bm_title = b_title
         AND     BAa_id = a_id
-        AND     BAb_id = a_id
+        AND     BAb_id = b_id
         AND     bc_id = c_id
         AND     u_name = '{}'""".format(user)
 
@@ -70,10 +71,22 @@ def Viewbookmarks(_conn,user):
             print(l)
             for row in rows:
                 print('|'.join([str(r) for r in row]))
+
+            print(Fore.BLUE + "Want to add to your bookmarks? Enter '1'. Remove bookmarks? Enter '2'. Enter '0' for Main Menu")
+            print(Style.RESET_ALL)
+
+            option = int(input("Option: "))
+            if option == 1:
+                listBooks(_conn)
+                addBookmarks(_conn, user)
+            if option == 2:
+                deleteBookmark(_conn, user)
+            if option == 0:
+                main()
     
     except Error as e:
-        # # If anything goes wrong
-        # _conn.rollback()
+
+        _conn.rollback()
         print(e)
 
 def listBooks(_conn):
@@ -103,15 +116,14 @@ def search(_conn):
     print("++++++++++++++++++++++++++++++++++")
     print("Searching table")
     try:
-
-        print("\nEnter Search Type:\n")
+        print(Fore.GREEN + "\nEnter Search Type:\n")
+        print(Style.RESET_ALL)
         print('0 -- Go Back to Menu')
         print('1 -- Search By Title')
         print('2 -- Search By Category')
         print('3 -- Search By Author')
         print('4 -- Search By Publisher')
         print('5 -- Search By Language')
-        print('6 -- Search By Publish Year')
 
 
         option = int(input("Option: "))
@@ -129,12 +141,12 @@ def search(_conn):
             languageSearch(_conn)
         if option == 6:
             exit()
+        else:
+            search(_conn)
 
-        # _conn.commit()
-        # print("success")
+
     except Error as e:
-        # # If anything goes wrong
-        # _conn.rollback()
+        _conn.rollback()
         print(e)
     print("++++++++++++++++++++++++++++++++++")
 
@@ -182,11 +194,9 @@ def titleSearch(_conn):
         if option == 0:
             main()
             
-        # _conn.commit()
-        # print("success")
+
     except Error as e:
-        # # If anything goes wrong
-        # _conn.rollback()
+        _conn.rollback()
         print(e)
 
     print("++++++++++++++++++++++++++++++++++")
@@ -238,10 +248,9 @@ def category(_conn):
         if option == 0:
             main()
 
-        # _conn.commit()
-        # print("success")
+
     except Error as e:
-        # If anything goes wrong
+
         _conn.rollback()
         print(e)
 
@@ -295,10 +304,7 @@ def authorSearch(_conn):
         if option == 0:
             main()
 
-        # _conn.commit()
-        # print("success")
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
 
@@ -342,7 +348,7 @@ def publisherSearch(_conn):
             for row in rows:
                 print('|'.join([str(r) for r in row]))
                 
-        print(Fore.BLUE + "\nEnter 1 to learn more about book, '0' to Main Menu.")
+        print(Fore.BLUE + "\nEnter '1' to learn more about book, '0' to Main Menu.")
         print(Style.RESET_ALL)
         option = int(input("Option: "))
         if option == 1:
@@ -350,10 +356,7 @@ def publisherSearch(_conn):
         if option == 0:
             main()
 
-        # _conn.commit()
-        # print("success")
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
 
@@ -403,17 +406,15 @@ def languageSearch(_conn):
         if option == 0:
             main()
 
-        # _conn.commit()
-        # print("success")
+
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
 
     print("++++++++++++++++++++++++++++++++++")
 
 def bookID(_conn):
-    print("Getting Table more information...")    
+    print("Getting more information...")    
     try:
         bookID = int(input("\nEnter Book ID to learn more about a book: "))
     
@@ -430,7 +431,7 @@ def bookID(_conn):
             print(Style.RESET_ALL)
             main()
         else:
-            l = ("Book ID | Title | Number of Pages |  Publish Year |Language")
+            l = ("Book ID | Title | Number of Pages |  Publish Year | Language")
             print(l)
             for row in rows:
                 print('|'.join([str(r) for r in row]))
@@ -444,7 +445,6 @@ def bookID(_conn):
             main()
 
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
 
@@ -452,21 +452,21 @@ def bookID(_conn):
 
 def addBook(_conn):
     print("++++++++++++++++++++++++++++++++++")
-    print(" add")
+    print("Add a book")
 
 
     while (True):
         try:
-            check = input ("Enter 'Quit' to end, press 'Enter' to continue: ")
-            if(check == 'Quit: '):
+            check = int(input ("Enter '0' for Main Menu, press 'Enter' to continue: "))
+            if(check == 0):
                 main()
             userinputID = input("Enter id: ")
             userinputTitle = input("Enter Title: ")
-            userinputisbn = input("Enter  isbn: ")
+            userinputisbn = input("Enter isbn: ")
             userinputlangauge = input("Enter Language: ")
             userinputPageNum = input("Enter number of pages: ")
             userinputpubYear = input("Enter publish year: ")
-            userinputbc_id= input("Enter caregory id: ")
+            userinputbc_id= input("Enter category id: ")
             userinputba_id = input("Enter author id: ")
             
             sql = """INSERT INTO Book 
@@ -478,7 +478,7 @@ def addBook(_conn):
             print(Fore.GREEN + "Book has been succesfully added.")
             print(Style.RESET_ALL)
         except Error as e:
-            # If anything goes wrong
+
             _conn.rollback()
             print(e)
 
@@ -503,15 +503,14 @@ def createUser(_conn):
         _conn.commit()
         print(Fore.GREEN + "User has been succesfully created.")
         print(Style.RESET_ALL)
+        Viewbookmarks(_conn, userinputName)
     except Error as e:
-        # If anything goes wrong
-        _conn.rollback()
         print(e)
     
 def checkUser(_conn):
     print("++++++++++++++++++++++++++++++++++")
 
-    print("Searching Table by User")
+    print("Searching Table for User")
     try:
         user = input("Enter Username: ")
         password = input("Enter password: ")
@@ -536,7 +535,6 @@ def checkUser(_conn):
             if option == 2:
                 checkUser(_conn)
         else:
-            print("Displaying User Bookmarks: \n")
             Viewbookmarks(_conn,user)
             print(Fore.BLUE + "Add More bookmarks? Enter '1', '0' for Main Menu")
             print(Style.RESET_ALL)
@@ -547,9 +545,7 @@ def checkUser(_conn):
                 addBookmarks(_conn, user)
 
         _conn.commit()
-        print("success")
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
 
@@ -560,7 +556,6 @@ def addBookmarks(_conn, user):
     try:
         userinputID = int(input("Enter id: "))
         num = random.randint(1, 1000)
-
 
         sql = """INSERT into bookmarks(bm_id,bm_userkey,bm_title)
                     SELECT ?, u_userkey, b_title
@@ -573,8 +568,8 @@ def addBookmarks(_conn, user):
         print(Fore.GREEN + "Your bookmark has been succesfully added!")
         print(Style.RESET_ALL)
         Viewbookmarks(_conn, user)
+
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
     print("++++++++++++++++++++++++++++++++++")
@@ -595,7 +590,34 @@ def deleteBook(_conn):
         print(Style.RESET_ALL)
         main()
     except Error as e:
-        # If anything goes wrong
+
+        _conn.rollback()
+        print(e)
+    print("++++++++++++++++++++++++++++++++++")
+
+def deleteBookmark(_conn, user):
+    print("Delete Books")
+    try:
+        bookID = int(input("\nEnter Book ID to delete bookmark: "))
+    
+        sql =  """DELETE FROM Bookmarks 
+                    WHERE bm_userkey = (
+                        SELECT u_userkey
+                        FROM User
+                        WHERE u_userkey = ?
+                    )
+                    AND bm_id = ?; """
+
+        cur = _conn.cursor()
+        cur.execute(sql,(user, bookID, ))
+        _conn.commit()
+
+        print(Fore.GREEN + "Bookmark has been succesfully deleted.")
+        print(Style.RESET_ALL)
+        Viewbookmarks(_conn, user)
+        main()
+    except Error as e:
+
         _conn.rollback()
         print(e)
     print("++++++++++++++++++++++++++++++++++")
@@ -615,7 +637,6 @@ def updateBooks(_conn):
         updateNumPages(_conn)
     if option == 0:
         main()
-
 
     print("++++++++++++++++++++++++++++++++++")
 
@@ -644,23 +665,21 @@ def updateNumPages(_conn):
                 print('|'.join([str(r) for r in row]))
 
     except Error as e:
-        # If anything goes wrong
         _conn.rollback()
         print(e)
-    # bookID = int(input("\nEnter Book ID to update a book: "))
-    new_rating = int(input("Enter new number of pages (Int): "))
+    numPages = int(input("Enter new number of pages (Int): "))
     try: 
         sql =  """UPDATE Book
                     SET b_numPages = ?
                     WHERE b_id = ?;"""
 
         cur = _conn.cursor()
-        cur.execute(sql,(new_rating, bookID, ))
+        cur.execute(sql,(numPages, bookID, ))
         _conn.commit()
         updateBooks(_conn)
 
     except Error as e:
-        # If anything goes wrong
+
         _conn.rollback()
         print(e)
     print("++++++++++++++++++++++++++++++++++")
@@ -669,6 +688,7 @@ def updateRating(_conn):
 
     try:
         bookID = int(input("\nEnter Book ID to update a book: "))
+
     
         sql =  """SELECT b_id, b_title, b_numPages, r_rating
                     FROM Book, Ratings
@@ -690,23 +710,25 @@ def updateRating(_conn):
                 print('|'.join([str(r) for r in row]))
 
     except Error as e:
-        # If anything goes wrong
+
         _conn.rollback()
         print(e)
     new_rating = float(input("Enter new rating (Float): "))
     try: 
-        sql =  """UPDATE Ratings, Book
+        sql =  """UPDATE Ratings
                     SET r_rating = ?
-                    WHERE b_id = r_title
-                    AND b_id = ?;"""
+                    WHERE r_title = (
+                        SELECT b_id
+                        FROM Book
+                        WHERE b_id = ?)"""
 
         cur = _conn.cursor()
-        cur.execute(sql,(bookID, new_rating ))
+        cur.execute(sql,(new_rating, bookID, ))
         _conn.commit()
         updateBooks(_conn)
 
     except Error as e:
-        # If anything goes wrong
+
         _conn.rollback()
         print(e)
     print("++++++++++++++++++++++++++++++++++")
@@ -716,10 +738,9 @@ def updateRating(_conn):
 def main():
     database = r"LibraryDB.sqlite"
 
-    # create a database connection
     conn = openConnection(database)
 
-    print(Fore.BLUE + "--- Library Management System ---\n")
+    print(Fore.BLUE + "--- Library Management System ---")
     print(Style.RESET_ALL)
 
     print(Fore.GREEN + 'Enter number of desired option: ')
