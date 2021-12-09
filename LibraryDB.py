@@ -236,7 +236,8 @@ def category(_conn):
         sql = """SELECT b_id, c_name, b_title, a_name
                     FROM Book, Category, Authors
                     WHERE bc_id = c_id
-                    AND ba_id = a_id
+                    AND BAa_id = a_id
+                    AND BAb_id = b_id
                     AND c_name LIKE  ?;"""
 
         cur = _conn.cursor()
