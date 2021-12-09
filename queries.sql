@@ -9,6 +9,13 @@ UPDATE  User
 SET     u_password = 'newpassword'
 WHERE   u_userkey = 3;
 
+UPDATE Ratings
+SET r_rating = 1.00
+FROM Book
+ON Ratings.r_title = Book.b_id
+SET r_rating = 1.00
+WHERE Book.b_id = 7;
+
 --3 new book
 INSERT INTO Book (b_id, b_title, b_isbn, b_language, b_numPages, b_publishYear, bc_id, ba_id) VALUES
 ('0022','Game of Thrones','0553588486 ', 'English', '835', '2005','08', '22');
@@ -23,6 +30,7 @@ INSERT INTO Authors(a_id, a_name) VALUES
 --5 Delete certain book
 DELETE FROM Book
 WHERE b_title = 'Game of Thrones';
+
 
 
 --6 display all books rated higher than 4.30
