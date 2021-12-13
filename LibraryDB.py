@@ -234,7 +234,7 @@ def category(_conn):
     try:
         category = input("Search for a book by category: ")
         sql = """SELECT b_id, c_name, b_title, a_name
-                    FROM Book, Category, Authors
+                    FROM Book, Category, Authors, BookAuthor
                     WHERE bc_id = c_id
                     AND BAa_id = a_id
                     AND BAb_id = b_id
@@ -514,7 +514,7 @@ def addBook(_conn):
 
 def createUser(_conn):
     print("++++++++++++++++++++++++++++++++++")
-    print(" add")
+    print("Creating a user")
 
     try:
         check = input ("Enter 'Quit' to end, press 'Enter' to continue: ")
